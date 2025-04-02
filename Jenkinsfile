@@ -1,29 +1,45 @@
-pipeline{
+@Library('my-shared-lib@main') _
+
+pipeline {
     agent any
-    tools {nodejs "nodejs"}
+    tools {
+        nodejs 'nodejs'
+    }
+    
     stages {
-        stage('Clone Repository'){
-            steps{
-                git branch: 'main',
-                    url: 'https://github.com/MIRTAHAALI/express_server_for_flutter_app_testing.git'
+        stage('Build') {
+            steps {
+                script {
+                    buildSteps()
+                }
             }
         }
         
-        stage('Install Dependencies'){
+        stage('Test Setup') {
             steps {
-                bat 'npm install'
-            }
-        }
-         stage('Install pm2'){
-            steps {
-                bat 'npm install pm2 -g'
+                script {
+                    testSteps()
+                }
             }
         }
         
-        stage('Deploy'){
+        stage('Deploy') {
             steps {
-                bat 'pm2 startOrRestart pm2.config.json'
+                script {
+                    deploySteps()
+                }
             }
+        }
+    }
+    
+    post {
+        always {
+            echo '✅ Pipeline concluído'
+            cleanWs()
+        }
+        failure {
+            echo '❌ Pipeline falhou'
+            // Adicione notificações aqui (Slack, Email, etc.)
         }
     }
 }
