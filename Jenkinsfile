@@ -1,4 +1,4 @@
-@Library('libraries@my-nodejs-shared-lib') _
+@Library('my-nodejs-shared-lib') _
 
 pipeline {
     agent any
